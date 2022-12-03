@@ -435,6 +435,7 @@ What I really like about this approach is that it includes all of the possible v
 {
   "compilerOptions": {
     /* Basic Options */
+      
     // "incremental": true,                   /* Enable incremental compilation */
     "target": "es5" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
     "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
@@ -455,7 +456,9 @@ What I really like about this approach is that it includes all of the possible v
     // "importHelpers": true,                 /* Import emit helpers from 'tslib'. */
     // "downlevelIteration": true,            /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
     // "isolatedModules": true,               /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
+        
     /* Strict Type-Checking Options */
+        
     "strict": true /* Enable all strict type-checking options. */,
     // "noImplicitAny": true,                 /* Raise error on expressions and declarations with an implied 'any' type. */
     // "strictNullChecks": true,              /* Enable strict null checks. */
@@ -464,12 +467,16 @@ What I really like about this approach is that it includes all of the possible v
     // "strictPropertyInitialization": true,  /* Enable strict checking of property initialization in classes. */
     // "noImplicitThis": true,                /* Raise error on 'this' expressions with an implied 'any' type. */
     // "alwaysStrict": true,                  /* Parse in strict mode and emit "use strict" for each source file. */
+    
     /* Additional Checks */
+        
     // "noUnusedLocals": true,                /* Report errors on unused locals. */
     // "noUnusedParameters": true,            /* Report errors on unused parameters. */
     // "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
     // "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
+    
     /* Module Resolution Options */
+        
     // "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
     // "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
     // "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
@@ -480,15 +487,21 @@ What I really like about this approach is that it includes all of the possible v
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
     // "preserveSymlinks": true,              /* Do not resolve the real path of symlinks. */
     // "allowUmdGlobalAccess": true,          /* Allow accessing UMD globals from modules. */
+        
     /* Source Map Options */
+        
     // "sourceRoot": "",                      /* Specify the location where debugger should locate TypeScript files instead of source locations. */
     // "mapRoot": "",                         /* Specify the location where debugger should locate map files instead of generated locations. */
     // "inlineSourceMap": true,               /* Emit a single file with source maps instead of having a separate file. */
     // "inlineSources": true,                 /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */
+    
     /* Experimental Options */
+        
     // "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
+        
     /* Advanced Options */
+        
     "skipLibCheck": true /* Skip type checking of declaration files. */,
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
     "resolveJsonModule": true
@@ -569,6 +582,59 @@ Then in the Source Tab on our DevTools, we have both `.js`, `.ts` file and we ca
 ```
 
 ### `rootDir` and `outDir`
+
+`outDir` handles where the compiled `.js` files will be placed. In default, will create them next to their `.ts` file, however if we would like a better folder structure, we can specify a folder, and when we compile our TS files, the folder will be created with all the compiled JS files.
+If you keep your TS files in seperate folders, the created compiled folder will follow the same structure.
+
+```javascript=
+{
+    "outDir": "./dist" /* Redirect output structure to the directory. */,
+}
+```
+
+`rootDir` behaves similar to `include`, however if we specify the folder we want the compiler to run. It will not look for other `.ts` files outside of that folder.
+
+
+```javascript=
+{
+    "rootDir": "./src", /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+}
+```
+
+### Stop emitting files on compilation errors
+
+```javascript=
+{
+    "noEmitOnError": false, /* Default: false */
+}
+```
+
+When it's `false`, the `.js` files will be generated even when an error occur. However in a project we would like to make sure there is no error in our application by setting it to `true`. 
+Then when there is an error, won't compile any files to javascript.
+
+### Code quality options
+
+```javascript=
+{
+    /* Additional Checks */
+        
+    // "noUnusedLocals": true,                /* Report errors on unused locals. */
+    // "noUnusedParameters": true,            /* Report errors on unused parameters. */
+    // "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
+    // "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
+}
+```
+
+`"noUnusedLocals": true` will give us a warning/error whenever we declare a variable and not using it.
+
+` "noImplicitReturns": true` will give a warning when a function has a code path where not all return a value. So we implicitly has to return nothing, or fix our code if that wasn't our planned outcome.
+
+
+## Classes & Interface
+
+### What are classes?
+
+
 
 
 
