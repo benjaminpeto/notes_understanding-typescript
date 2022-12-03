@@ -1,6 +1,5 @@
 ---
 title: 'TypeScript Course Notes'
-disqus: hackmd
 ---
 
 Understanding TypeScript
