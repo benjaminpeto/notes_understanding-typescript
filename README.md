@@ -49,6 +49,9 @@ Understanding TypeScript
     - [Code quality options](#code-quality-options)
   - [Classes \& Interface](#classes--interface)
     - [What are classes?](#what-are-classes)
+      - [What's Object-oriented Programming (OOP)?](#whats-object-oriented-programming-oop)
+      - [Classes \& Instances](#classes--instances)
+    - [Creating a first class](#creating-a-first-class)
 
 ___
 
@@ -674,10 +677,47 @@ Then when there is an error, won't compile any files to javascript.
 
 ### What are classes?
 
+#### What's Object-oriented Programming (OOP)?
 
+![](https://i.imgur.com/xgDKBeN.jpg)
 
+#### Classes & Instances
 
+![](https://i.imgur.com/6iJcsof.jpg)
 
+### Creating a first class
+
+TypeScript offers full support for the `class` keyword introduced in ES2015.
+
+As with other JavaScript language features, TypeScript adds type annotations and other syntax to allow you to express relationships between classes and other types.
+
+```javascript=
+// index.ts
+class Department {
+    name: string;
+    
+    constructor(n: string) {
+        this.name = n;
+    }
+}
+const accounting = New Department('Accounting');
+console.log(accounting);
+```
+
+The compilation to Javascript of such a `class` depends on the `"target"` we specify. For example if we compile it to **ES5** which didn't support modern JS *(as classes only available since ES6)*, after compilation this code would be a constructor function with the Department object.
+
+```javascript=
+// index.js - Compiled code
+"use strict";
+var Department =(function () {
+    function Department(n) {
+        this.name = n;
+    }
+    return Department;
+}());
+var accounting = new Department('Accounting');
+console.log(accounting);
+```
 
 
 
