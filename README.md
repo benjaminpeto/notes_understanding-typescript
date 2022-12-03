@@ -1,13 +1,54 @@
----
-title: 'TypeScript Course Notes'
----
 
 Understanding TypeScript
 ===
 
 ## Table of Contents
 
-[TOC]
+- [Understanding TypeScript](#understanding-typescript)
+  - [Table of Contents](#table-of-contents)
+  - [Getting started](#getting-started)
+    - [What is TypeScript?](#what-is-typescript)
+    - [Why TypeScript?](#why-typescript)
+    - [Installing and compiling TypeScript](#installing-and-compiling-typescript)
+    - [Advantages of TypeScript - Overview](#advantages-of-typescript---overview)
+  - [TypeScript Basics \& Basic Types](#typescript-basics--basic-types)
+    - [Using Types](#using-types)
+    - [Typescript Types vs JS Types](#typescript-types-vs-js-types)
+    - [Type Casing](#type-casing)
+    - [Working with Numbers, Strings \& Booleans](#working-with-numbers-strings--booleans)
+    - [Type Assignment \& Type Inference](#type-assignment--type-inference)
+    - [Object Types](#object-types)
+      - [**Objects**](#objects)
+      - [**Array types**](#array-types)
+      - [**Typed arrays (Tuple)**](#typed-arrays-tuple)
+      - [**Enums**](#enums)
+        - [Numeric Enums - Default](#numeric-enums---default)
+        - [Numeric Enums - Initialized](#numeric-enums---initialized)
+        - [Numeric Enums - Fully Initialized](#numeric-enums---fully-initialized)
+        - [String Enums](#string-enums)
+      - [**Any type**](#any-type)
+      - [**Union Types**](#union-types)
+        - [Union ```|``` (OR)](#union--or)
+      - [**Literal types**](#literal-types)
+      - [**Type aliases**](#type-aliases)
+      - [**Funtion return types and "void"**](#funtion-return-types-and-void)
+      - [**Functions as Types**](#functions-as-types)
+      - [**Function Types and Callbacks**](#function-types-and-callbacks)
+      - [**The "unknown" type**](#the-unknown-type)
+      - [**The "never" type**](#the-never-type)
+  - [The TypeScript Compiler (and its Configuration)](#the-typescript-compiler-and-its-configuration)
+    - [Using 'Watch Mode'](#using-watch-mode)
+    - [Compiling the entire project/multiple files](#compiling-the-entire-projectmultiple-files)
+    - [Including and excluding files](#including-and-excluding-files)
+      - [Let's see an example below](#lets-see-an-example-below)
+    - [Setting a compilation target](#setting-a-compilation-target)
+    - [Understanding TypeScript Core Libs](#understanding-typescript-core-libs)
+    - [Working with Source Maps](#working-with-source-maps)
+    - [`rootDir` and `outDir`](#rootdir-and-outdir)
+    - [Stop emitting files on compilation errors](#stop-emitting-files-on-compilation-errors)
+    - [Code quality options](#code-quality-options)
+  - [Classes \& Interface](#classes--interface)
+    - [What are classes?](#what-are-classes)
 
 ___
 
