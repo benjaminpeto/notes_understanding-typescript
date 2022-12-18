@@ -490,7 +490,7 @@ In the `tsconfig.json` file we can specify how we would like to set up the compi
 
 What I really like about this approach is that it includes all of the possible values and their reasoning. I know that there is the [docs](https://www.typescriptlang.org/docs/) with all of this information, but how convinient is just read it in the codebase without jumping through apps. 
 
-```javascript=
+```javascript
 {
   "compilerOptions": {
     /* Basic Options */
@@ -577,7 +577,7 @@ What I really like about this approach is that it includes all of the possible v
 
 We can also use these paths as a wildcard with the asteriqs (*)
 
-```javascript=
+```javascript
 "exclude": [
     "*.test.ts" // all files with '.test' pattern will be ignored
     "**/*.dev.ts" // any files with '.dev' pattern in any folder will be ignored
@@ -588,7 +588,7 @@ We can also use these paths as a wildcard with the asteriqs (*)
 
 Modern browsers support all ES6 features, so ES6 is a good choice. You might choose to set a lower target if your code is deployed to older environments, or a higher target if your code is guaranteed to run in newer environments.
 
-```javascript=
+```javascript
 {
     "target" : "es6",
 }
@@ -599,7 +599,7 @@ The target setting changes which JS features are downleveled and which are left 
 
 ### Understanding TypeScript Core Libs
 
-```javascript=
+```javascript
 {
     // "lib": [], /* Specify library files to be included in the compilation. */
 }
@@ -610,7 +610,7 @@ TypeScript includes a default set of type definitions for built-in JS APIs (like
 :::info
 **Default** settings available when it's commented out. Once we specify the empty array of `"lib": []`, we tell TS to only include whatever we specify.
 
-```javascript=
+```javascript
 {
     // Exact default settings while commented out, all core JavaScript feature
     "lib": [
@@ -634,7 +634,7 @@ TypeScript includes a default set of type definitions for built-in JS APIs (like
 Source maps help us debugging and development. When we enable it, it will generate a `.js.map` file which then act as a bridge between our JS compiled file and the TS file, which then the browser will understand.
 Then in the Source Tab on our DevTools, we have both `.js`, `.ts` file and we can debug straight our `.ts` file, which is super convenient.
 
-```javascript=
+```javascript
 {
     "sourceMap" : true,  /* Generates corresponding '.map' file. */
 }
@@ -645,7 +645,7 @@ Then in the Source Tab on our DevTools, we have both `.js`, `.ts` file and we ca
 `outDir` handles where the compiled `.js` files will be placed. In default, will create them next to their `.ts` file, however if we would like a better folder structure, we can specify a folder, and when we compile our TS files, the folder will be created with all the compiled JS files.
 If you keep your TS files in seperate folders, the created compiled folder will follow the same structure.
 
-```javascript=
+```javascript
 {
     "outDir": "./dist" /* Redirect output structure to the directory. */,
 }
@@ -654,7 +654,7 @@ If you keep your TS files in seperate folders, the created compiled folder will 
 `rootDir` behaves similar to `include`, however if we specify the folder we want the compiler to run. It will not look for other `.ts` files outside of that folder.
 
 
-```javascript=
+```javascript
 {
     "rootDir": "./src", /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
 }
@@ -662,7 +662,7 @@ If you keep your TS files in seperate folders, the created compiled folder will 
 
 ### Stop emitting files on compilation errors
 
-```javascript=
+```javascript
 {
     "noEmitOnError": false, /* Default: false */
 }
@@ -673,7 +673,7 @@ Then when there is an error, won't compile any files to javascript.
 
 ### Code quality options
 
-```javascript=
+```javascript
 {
     /* Additional Checks */
         
@@ -707,7 +707,7 @@ TypeScript offers full support for the `class` keyword introduced in ES2015.
 
 As with other JavaScript language features, TypeScript adds type annotations and other syntax to allow you to express relationships between classes and other types.
 
-```javascript=
+```javascript
 // index.ts
 class Department {
     name: string;
@@ -722,7 +722,7 @@ console.log(accounting);
 
 The compilation to Javascript of such a `class` depends on the `"target"` we specify. For example if we compile it to **ES5** which didn't support modern JS *(as classes only available since ES6)*, after compilation this code would be a constructor function with the Department object.
 
-```javascript=
+```javascript
 // index.js - Compiled code
 "use strict";
 var Department =(function () {
@@ -743,7 +743,7 @@ When we building a more complex `class` instance, we want to make sure, once our
 You can also use `private` for **variables** and **methods**.
 :::
 
-```javascript=
+```javascript
 class Department {
     public name: string;
     private employees: string[] = [];
@@ -775,7 +775,7 @@ accounting.employees[0] = 'Anna' // will give an error as it has a private class
 
 We can refactor the constructor and variable declaration easily, so we can get rid off declaring our variables twice.
 
-```javascript=
+```javascript
 class Department {
     name: string;
     private id: string;
@@ -789,7 +789,7 @@ class Department {
 
 *After refactor:*
 
-```javascript=
+```javascript
 class Department {
     
     constructor(private name: string, public id: string) 
@@ -806,7 +806,7 @@ Make sure when declaring props this way, you must use the modifiers before the v
 
 It's a TypeScript feature that enables us to set a variable with it to be **only read**, without any modification **inside and outside its class**.
 
-```javascript=
+```javascript
 class Department {
     name: string;
     private readonly id: string;
@@ -822,7 +822,7 @@ class Department {
 
 ### Inheritance
 
-```javascript=
+```javascript
 class ITDepartment extends Department {
     admins: string[];
     constructor(id: string) {
@@ -849,7 +849,7 @@ ES6 includes static members and so does TypeScript. The static members of a clas
 
 The static members can be defined by using the keyword `static`. Consider the following example of a class with static property.
 
-```javascript=
+```javascript
 class Circle {
     static pi: number = 3.14;
 }
@@ -873,7 +873,7 @@ An abstract method does not contain implementation. It only defines the signatur
 
 The following shows the Employee abstract class that has the `getSalary()` abstract method:
 
-```javascript=
+```javascript
 abstract class Employee {
     constructor(private firstName: string, private lastName: string) {
     }
@@ -899,7 +899,7 @@ The `getSalary()` method is an abstract method. The derived class will implement
 
 We can use it to describe how an objest should look like.
 
-```javascript=
+```javascript
 interface Person {
     name: string;
     age: number;
@@ -936,7 +936,7 @@ If we implement the interface with a class, the class will automatically know ab
 
 To extend interfaces, we use the `extends` keyword.
 
-```javascript=
+```javascript
 interface Person {
     name: string;
     age: number;
@@ -952,7 +952,7 @@ interface Greetable extends People{
 As functions are objects in the end. We can use interface to define a function, just as types can define a function.
 However **its syntax is different** from a function type.
 
-```
+```javascript
 // type AddFn = (a: number, b: number) => number;
 
 interface AddFn {
@@ -970,7 +970,7 @@ add = (n1: number, n2: number) => {
 
 We use question mark after the property name to specify as optional. We can use the same thing in classes as well. So if we don't have a value assing to this prop, we won't get an error.
 
-```javascript=
+```javascript
 interface Person {
     name: string;
     age?: number;
