@@ -56,6 +56,18 @@ Understanding TypeScript
     - [Shorthand initialization](#shorthand-initialization)
     - [`readonly` properties](#readonly-properties)
     - [Inheritance](#inheritance)
+    - [Overriding properties and the `protected` modifier](#overriding-properties-and-the-protected-modifier)
+    - [Static methods \& properties](#static-methods--properties)
+    - [Abstract classes](#abstract-classes)
+    - [A first inheritance](#a-first-inheritance)
+    - [`Interface` vs `Type`](#interface-vs-type)
+    - [`readonly` interface properties](#readonly-interface-properties)
+    - [Extending interfaces](#extending-interfaces)
+    - [Interfaces as function types](#interfaces-as-function-types)
+    - [Optional parameters \& properties](#optional-parameters--properties)
+    - [Compiling interfaces to JavaScript](#compiling-interfaces-to-javascript)
+  - [Advanced Types](#advanced-types)
+    - [Intersection types](#intersection-types)
 
 ___
 
@@ -810,9 +822,168 @@ class Department {
 
 ### Inheritance
 
+```javascript=
+class ITDepartment extends Department {
+    admins: string[];
+    constructor(id: string) {
+        super(id, admins: string[]);
+        this.admins = admins;
+    }
+}
+```
 
+We cannot inherit from multiple class. Also if we don't specify the constructor of our sub-class, it will inherit from its parent class automatically.
+After specifying a constructor, we must call the `super()` method with the properties of the base class. Only after that we can use `this`.
+ 
+### Overriding properties and the `protected` modifier
 
+:::info
+Private properties are only accessible in the class where they are defined. We cannot access them from outside of that class even if another class inherited that class.
+:::
 
+If we want to have full access to properties in a sub-class which inherited from the parent class, and also want to access those private properties, we can use the `protected` keyword instead of `private` so any class which inherited from the base class, will have access to those properties as well. The property still won't be accessible outside from that class or the one which inherited them.
+
+### Static methods & properties
+
+ES6 includes static members and so does TypeScript. The static members of a class are accessed using the class name and dot notation, without creating an object e.g. `<ClassName>.<StaticMember>`.
+
+The static members can be defined by using the keyword `static`. Consider the following example of a class with static property.
+
+```javascript=
+class Circle {
+    static pi: number = 3.14;
+}
+```
+
+The above Circle class includes a static property pi. This can be accessed using Circle.pi.
+
+:::warning
+Static members can be only accessed in static methods.
+:::
+
+### Abstract classes
+
+An abstract class is typically used to define common behaviors for derived classes to extend. Unlike a regular class, an abstract class cannot be instantiated directly.
+
+To declare an abstract class, you use the `abstract` keyword.
+
+Typically, an abstract class contains one or more abstract methods.
+
+An abstract method does not contain implementation. It only defines the signature of the method without including the method body. An abstract method must be implemented in the derived class.
+
+The following shows the Employee abstract class that has the `getSalary()` abstract method:
+
+```javascript=
+abstract class Employee {
+    constructor(private firstName: string, private lastName: string) {
+    }
+    abstract getSalary(): number
+    get fullName(): string {
+        return `${this.firstName} ${this.lastName}`;
+    }
+    compensationStatement(): string {
+        return `${this.fullName} makes ${this.getSalary()} a month.`;
+    }
+}
+```
+
+The `getSalary()` method is an abstract method. The derived class will implement the logic based on the type of employee.
+
+:::info
+ - Abstract classes cannot be instantiated.
+ - An Abstract class has at least one abstract method.
+ - To use an abstract class, you need to inherit it and provide the implementation for the abstract methods.
+:::
+
+### A first inheritance
+
+We can use it to describe how an objest should look like.
+
+```javascript=
+interface Person {
+    name: string;
+    age: number;
+    greet(phrase:string): void;
+}
+
+let user1: Person;
+
+user1 = {
+    name: 'Benji',
+    age: 30,
+    greet(phrase: string) {
+        console.log(phrase + ' ' + this.name);
+    }
+}
+
+user1.greet("Shakalaca - I'm")
+```
+
+An `interface` cannot have an initializer, so we cannot give value to its properties. We can use it to type check a variable.
+
+### `Interface` vs `Type`
+
+If we would change the interface to be a type, it would still compile without any error. So why we need interfaces? Good question.. :smile:
+
+The major difference between the two, that with `interface`, we can **only** define the structure of an object, so it's more clear what we are working with. On the other hand `type` is more flexible.
+
+### `readonly` interface properties
+
+Just like classes has `readonly` properties, interfaces can have that too. So we can use the keyword before the property and initialize a value, then we can call that props anywhere, but we cannot modify it.
+If we implement the interface with a class, the class will automatically know about that property, so we don't have to use the keyword again.
+
+### Extending interfaces
+
+To extend interfaces, we use the `extends` keyword.
+
+```javascript=
+interface Person {
+    name: string;
+    age: number;
+}
+
+interface Greetable extends People{
+    greet(phrase:string): void;
+}
+```
+
+### Interfaces as function types
+
+As functions are objects in the end. We can use interface to define a function, just as types can define a function.
+However **its syntax is different** from a function type.
+
+```
+// type AddFn = (a: number, b: number) => number;
+
+interface AddFn {
+    (a: number, b: number): number;
+}
+
+let add: AddFn;
+
+add = (n1: number, n2: number) => {
+    return n1 + n2;
+};
+```
+
+### Optional parameters & properties
+
+We use question mark after the property name to specify as optional. We can use the same thing in classes as well. So if we don't have a value assing to this prop, we won't get an error.
+
+```javascript=
+interface Person {
+    name: string;
+    age?: number;
+}
+```
+
+### Compiling interfaces to JavaScript
+
+Javascript doesn't have interfaces, so won't appear any output in your compiled javascript file. They are only used in the time of compilation, but after they are dumped and won't appear in the javascript file.
+
+## Advanced Types
+
+### Intersection types
 
 
 
