@@ -52,6 +52,10 @@ Understanding TypeScript
       - [What's Object-oriented Programming (OOP)?](#whats-object-oriented-programming-oop)
       - [Classes \& Instances](#classes--instances)
     - [Creating a first class](#creating-a-first-class)
+    - [`public` and `private` modifiers](#public-and-private-modifiers)
+    - [Shorthand initialization](#shorthand-initialization)
+    - [`readonly` properties](#readonly-properties)
+    - [Inheritance](#inheritance)
 
 ___
 
@@ -718,6 +722,93 @@ var Department =(function () {
 var accounting = new Department('Accounting');
 console.log(accounting);
 ```
+
+### `public` and `private` modifiers
+
+When we building a more complex `class` instance, we want to make sure, once our properties defined, there is only one way to modify them and they cannot be modified outside of the `class` so we can avoid mutation.
+
+:::info
+You can also use `private` for **variables** and **methods**.
+:::
+
+```javascript=
+class Department {
+    public name: string;
+    private employees: string[] = [];
+    
+    constructor(n: string) {
+        this.name = n;
+    }
+
+    describe(this: Department) {
+        console.log('Department: ' + this.name);
+    }
+
+    addEmployee(employee: string) {
+        this.employees.push(employee)
+    }
+}
+
+accounting.name = 'New name'; // won't give an error as the 'name' variable is public and reachable outside of the class declaration
+
+accounting.employees[0] = 'Anna' // will give an error as it has a private class and cannot modify outside of the class
+```
+
+:::warning
+`public` properties are accessible from outside of the class, however `public` modifier is the **default** behaviour, so we don't need to explicitly declare on every variables.
+:::
+
+
+### Shorthand initialization
+
+We can refactor the constructor and variable declaration easily, so we can get rid off declaring our variables twice.
+
+```javascript=
+class Department {
+    name: string;
+    private id: string;
+    
+    constructor(n: string, id: string) {
+        this.name = n;
+        this.id = id;
+    }
+}
+```
+
+*After refactor:*
+
+```javascript=
+class Department {
+    
+    constructor(private name: string, public id: string) 
+    {
+        
+    }
+}
+```
+:::warning
+Make sure when declaring props this way, you must use the modifiers before the variable name.
+:::
+
+### `readonly` properties
+
+It's a TypeScript feature that enables us to set a variable with it to be **only read**, without any modification **inside and outside its class**.
+
+```javascript=
+class Department {
+    name: string;
+    private readonly id: string;
+    
+    constructor(n: string, id: string) {
+        this.name = n;
+        this.id = id;
+    }
+}
+```
+
+*Adds extra safety to certain properties only can be initialized once.*
+
+### Inheritance
 
 
 
