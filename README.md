@@ -148,14 +148,14 @@ In JS and TS all numbers are float numbers, so there are no difference between 5
 
 Bad practice to assing a type to a variable is we already initialising it as well.
 
-```
+```typescript
 let number1 = 5         // good practice
 let number1: number = 5 // bad practice
 ```
 
 However if we only declaring the variable, without giving a value to it, it's good to write out its type, so later we can refer to its correct type, or get a compiling error to warn us incorrect typings.
 
-```
+```typescript
 let number1: number
 let number1 = 5   // no error
 let number1 = '5' // Compile error: Type of 'string' not assignable to type of 'number'
@@ -179,7 +179,7 @@ const car: { type: string, model: string, year: number } = {
 ```
 however TypeScript can infer the types of properties based on their values.
 
-```typescript!
+```typescript
 const car = {
   type: "Toyota",
 };
@@ -205,7 +205,7 @@ A tuple is a typed array with a pre-defined length and types for each index.
 Tuples are great because they allow each element in the array to be a known type of value.
 To define a tuple, specify the type of each element in the array:
 
-```typescript!
+```typescript
 // define our tuple
 let ourTuple: [number, boolean, string];
 
@@ -229,7 +229,7 @@ Enums come in two flavors **string** and **numeric**. Lets start with numeric.
  ##### Numeric Enums - Default
 By default, enums will initialize the first value to 0 and add 1 to each additional value:
 
-```typescript!
+```typescript
 enum CardinalDirections {
   North, // 0
   East,  // 1
@@ -262,7 +262,7 @@ console.log(CardinalDirections.West);
 ##### Numeric Enums - Fully Initialized
 You can assign unique number values for each enum value. Then the values will not incremented automatically:
 
-```typescript!
+```typescript
 enum StatusCodes {
   NotFound = 404,
   Success = 200,
@@ -277,7 +277,7 @@ console.log(StatusCodes.Success);
 ##### String Enums
 Enums can also contain strings. This is more common than numeric enums, because of their readability and intent.
 
-```typescript!
+```typescript
 enum CardinalDirections {
   North = 'North',
   East = "East",
@@ -298,7 +298,7 @@ console.log(CardinalDirections.West);
 `any` can be a useful way to get past errors since it disables type checking, but TypeScript will not be able provide type safety, and tools which rely on type data, such as auto completion, will not work. Remember, it should be avoided at "any" cost...
 :::
 
-```typescript!
+```typescript
 let v: any = true;
 v = "string"; // no error as it can be "any" type
 Math.round(v); // no error as it can be "any" type
@@ -312,7 +312,7 @@ Such as when a property would be string or number. Also you can accept as much a
 ##### Union ```|``` (OR)
 Using the ```|``` we are saying our parameter is a string or number:
 
-```typescript!
+```typescript
 function printStatusCode(code: string | number) {
   console.log(`My status code is ${code}.`)
 }
@@ -330,7 +330,7 @@ By themselves, literal types aren’t very valuable. It’s not much use to have
 
 But by combining literals into unions, you can express a much more useful concept - for example, functions that only accept a certain set of known values:
 
-```typescript!
+```typescript
 function printText(s: string, alignment: "left" | "right" | "center") {
   // do something
 }
@@ -355,7 +355,7 @@ We’ve been using object types and union types by writing them directly in type
 
 A type alias is exactly that - a name for any type. The syntax for a type alias is:
 
-```typescript!
+```typescript
 type Point = {
   x: number;
   y: number;
@@ -364,13 +364,13 @@ type Point = {
 
 You can actually use a type alias to give a name to any type at all, not just an object type. For example, a type alias can name a union type:
 
-```typescript!
+```typescript
 type ID = number | string;
 ```
 
 Helps to simplify code and reuse types without repetition.
 
-```typescript!
+```typescript
 type User = {
     name: string;
     age: number;
@@ -382,7 +382,7 @@ function greetUser(user: User) {
 
 #### **Funtion return types and "void"**
 
-```typescript!
+```typescript
 function add(n1:number, n2:number) {
     return n1 + n2;
 }
@@ -406,7 +406,7 @@ Function types allow us to describe which type of functions specifically we want
 
 #### **Function Types and Callbacks**
 
-```typescript!
+```typescript
 function addAndHandle(n1: number, n2: number, cb: (num: number) => void) {
     const result = n1 + n2;
     cb(result);
@@ -428,7 +428,7 @@ Anything is assignable to "unknown", but "unknown" is not assignable to anything
 
 We can force the compiler to trust that an unknown varible has a specific type: const bar: string = foo as string. However, typecast might backfire us if we are not mindful using it.
 
-```typescript!
+```typescript
 let userInput: unknown;
 
 userInput = 5;
@@ -439,7 +439,7 @@ userInput = 'Ted';
 
 The `never` type is used when you are sure that something is never going to occur. For example, you write a function which will not return to its end point or always throws an exception.
 
-```typescript!
+```typescript
 function throwError(errorMsg: string): never { 
     throw new Error(errorMsg); 
 } 
@@ -461,7 +461,7 @@ It's useful so we don't have to manually recompile everytime we change something
 
 To initiate 'watch mode', instead of `tsc app.ts` in the terminal, we can write:
 
-```bash=
+```bash
 tsc app.ts --watch
 # OR
 tsc app.ts -w
@@ -475,19 +475,19 @@ We can tell TS to compile our whole project and recompile it every time we chang
 
 *You only have to make sure, you **run** this command **in the root directory** of your project, so TS will know where to look for them.*
 
-```bash=
+```bash
 tsc --init
 ```
 
 This will create your `tsconfing.json` file, where you can specify a bunch of different things about how TS should handle your project. However, without changing anything on your `tsconfig`, you will be able to compile all your `.ts` extension files in your project with 
 
-```bash=
+```bash
 tsc
 ```
 
 This you can use it together with the above mentioned 'watch mode', so you can see any changes in any files automatically. So you don't need to recompile every time.
 
-```bash=
+```bash
 tsc --watch
 ```
 
