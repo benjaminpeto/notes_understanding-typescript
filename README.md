@@ -68,6 +68,15 @@ Understanding TypeScript
     - [Compiling interfaces to JavaScript](#compiling-interfaces-to-javascript)
   - [Advanced Types](#advanced-types)
     - [Intersection types](#intersection-types)
+    - [More on Type Guards](#more-on-type-guards)
+    - [Discriminated Unions](#discriminated-unions)
+    - [Type casting](#type-casting)
+    - [Index properties](#index-properties)
+    - [Function overloads](#function-overloads)
+    - [Optional chaining](#optional-chaining)
+    - [Nullish coalescing](#nullish-coalescing)
+  - [Generics](#generics)
+    - [Built-in generics \& what are generics?](#built-in-generics--what-are-generics)
 
 ___
 
@@ -96,13 +105,13 @@ We could write more code and sanitize the user input, however TS comes handy as 
 :::info 
 In order for you to run TypeScript and compile it on your local machine, make sure you have Node and npm installed to be able to install it through CLI.
 
-```javascript
+```typescript
 // Install TypeScipt globally
 
 npm install -g typescript
 ```
 To be able to run your TS file in the browers, first you need to compile it to plain JS, which you can do with TS itself and the following command. Makes sure to navigate into the folder where you TS file is saved.
-```javascript
+```typescript
 // Compile TS file to JS
 
 tsc [nameOfFile].ts
@@ -161,7 +170,7 @@ let number1 = '5' // Compile error: Type of 'string' not assignable to type of '
 
 We can explicitly define the types of variables in TS:
 
-```javascript
+```typescript
 const car: { type: string, model: string, year: number } = {
   type: "Toyota",
   model: "Corolla",
@@ -170,7 +179,7 @@ const car: { type: string, model: string, year: number } = {
 ```
 however TypeScript can infer the types of properties based on their values.
 
-```javascript!
+```typescript!
 const car = {
   type: "Toyota",
 };
@@ -182,7 +191,7 @@ car.type = 2; // Error: Type 'number' is not assignable to type 'string'.
 
 Similar to objects except the syntax.
 
-```javascript
+```typescript
 const names: string[] = ["Capitan", "Lily"];
 names.push("Rocco"); // no error
 names.push(3); // Error: Argument of type 'number' is not assignable to parameter of type 'string'.
@@ -196,7 +205,7 @@ A tuple is a typed array with a pre-defined length and types for each index.
 Tuples are great because they allow each element in the array to be a known type of value.
 To define a tuple, specify the type of each element in the array:
 
-```javascript!
+```typescript!
 // define our tuple
 let ourTuple: [number, boolean, string];
 
@@ -220,7 +229,7 @@ Enums come in two flavors **string** and **numeric**. Lets start with numeric.
  ##### Numeric Enums - Default
 By default, enums will initialize the first value to 0 and add 1 to each additional value:
 
-```javascript!
+```typescript!
 enum CardinalDirections {
   North, // 0
   East,  // 1
@@ -237,7 +246,7 @@ currentDirection = 'North'; // Error: "North" is not assignable to type 'Cardina
 ##### Numeric Enums - Initialized
 You can set the value of the first numeric enum and have it auto increment from that:
 
-```javascript
+```typescript
 enum CardinalDirections {
   North = 1,
   East,
@@ -253,7 +262,7 @@ console.log(CardinalDirections.West);
 ##### Numeric Enums - Fully Initialized
 You can assign unique number values for each enum value. Then the values will not incremented automatically:
 
-```javascript!
+```typescript!
 enum StatusCodes {
   NotFound = 404,
   Success = 200,
@@ -268,7 +277,7 @@ console.log(StatusCodes.Success);
 ##### String Enums
 Enums can also contain strings. This is more common than numeric enums, because of their readability and intent.
 
-```javascript!
+```typescript!
 enum CardinalDirections {
   North = 'North',
   East = "East",
@@ -289,7 +298,7 @@ console.log(CardinalDirections.West);
 `any` can be a useful way to get past errors since it disables type checking, but TypeScript will not be able provide type safety, and tools which rely on type data, such as auto completion, will not work. Remember, it should be avoided at "any" cost...
 :::
 
-```javascript!
+```typescript!
 let v: any = true;
 v = "string"; // no error as it can be "any" type
 Math.round(v); // no error as it can be "any" type
@@ -303,7 +312,7 @@ Such as when a property would be string or number. Also you can accept as much a
 ##### Union ```|``` (OR)
 Using the ```|``` we are saying our parameter is a string or number:
 
-```javascript!
+```typescript!
 function printStatusCode(code: string | number) {
   console.log(`My status code is ${code}.`)
 }
@@ -321,7 +330,7 @@ By themselves, literal types aren’t very valuable. It’s not much use to have
 
 But by combining literals into unions, you can express a much more useful concept - for example, functions that only accept a certain set of known values:
 
-```javascript!
+```typescript!
 function printText(s: string, alignment: "left" | "right" | "center") {
   // do something
 }
@@ -346,7 +355,7 @@ We’ve been using object types and union types by writing them directly in type
 
 A type alias is exactly that - a name for any type. The syntax for a type alias is:
 
-```javascript!
+```typescript!
 type Point = {
   x: number;
   y: number;
@@ -355,13 +364,13 @@ type Point = {
 
 You can actually use a type alias to give a name to any type at all, not just an object type. For example, a type alias can name a union type:
 
-```javascript!
+```typescript!
 type ID = number | string;
 ```
 
 Helps to simplify code and reuse types without repetition.
 
-```javascript!
+```typescript!
 type User = {
     name: string;
     age: number;
@@ -373,7 +382,7 @@ function greetUser(user: User) {
 
 #### **Funtion return types and "void"**
 
-```javascript!
+```typescript!
 function add(n1:number, n2:number) {
     return n1 + n2;
 }
@@ -397,7 +406,7 @@ Function types allow us to describe which type of functions specifically we want
 
 #### **Function Types and Callbacks**
 
-```javascript!
+```typescript!
 function addAndHandle(n1: number, n2: number, cb: (num: number) => void) {
     const result = n1 + n2;
     cb(result);
@@ -419,7 +428,7 @@ Anything is assignable to "unknown", but "unknown" is not assignable to anything
 
 We can force the compiler to trust that an unknown varible has a specific type: const bar: string = foo as string. However, typecast might backfire us if we are not mindful using it.
 
-```javascript!
+```typescript!
 let userInput: unknown;
 
 userInput = 5;
@@ -430,7 +439,7 @@ userInput = 'Ted';
 
 The `never` type is used when you are sure that something is never going to occur. For example, you write a function which will not return to its end point or always throws an exception.
 
-```javascript!
+```typescript!
 function throwError(errorMsg: string): never { 
     throw new Error(errorMsg); 
 } 
@@ -490,7 +499,7 @@ In the `tsconfig.json` file we can specify how we would like to set up the compi
 
 What I really like about this approach is that it includes all of the possible values and their reasoning. I know that there is the [docs](https://www.typescriptlang.org/docs/) with all of this information, but how convinient is just read it in the codebase without jumping through apps. 
 
-```javascript
+```typescript
 {
   "compilerOptions": {
     /* Basic Options */
@@ -577,7 +586,7 @@ What I really like about this approach is that it includes all of the possible v
 
 We can also use these paths as a wildcard with the asteriqs (*)
 
-```javascript
+```typescript
 "exclude": [
     "*.test.ts" // all files with '.test' pattern will be ignored
     "**/*.dev.ts" // any files with '.dev' pattern in any folder will be ignored
@@ -588,7 +597,7 @@ We can also use these paths as a wildcard with the asteriqs (*)
 
 Modern browsers support all ES6 features, so ES6 is a good choice. You might choose to set a lower target if your code is deployed to older environments, or a higher target if your code is guaranteed to run in newer environments.
 
-```javascript
+```typescript
 {
     "target" : "es6",
 }
@@ -599,7 +608,7 @@ The target setting changes which JS features are downleveled and which are left 
 
 ### Understanding TypeScript Core Libs
 
-```javascript
+```typescript
 {
     // "lib": [], /* Specify library files to be included in the compilation. */
 }
@@ -610,7 +619,7 @@ TypeScript includes a default set of type definitions for built-in JS APIs (like
 :::info
 **Default** settings available when it's commented out. Once we specify the empty array of `"lib": []`, we tell TS to only include whatever we specify.
 
-```javascript
+```typescript
 {
     // Exact default settings while commented out, all core JavaScript feature
     "lib": [
@@ -634,7 +643,7 @@ TypeScript includes a default set of type definitions for built-in JS APIs (like
 Source maps help us debugging and development. When we enable it, it will generate a `.js.map` file which then act as a bridge between our JS compiled file and the TS file, which then the browser will understand.
 Then in the Source Tab on our DevTools, we have both `.js`, `.ts` file and we can debug straight our `.ts` file, which is super convenient.
 
-```javascript
+```typescript
 {
     "sourceMap" : true,  /* Generates corresponding '.map' file. */
 }
@@ -645,7 +654,7 @@ Then in the Source Tab on our DevTools, we have both `.js`, `.ts` file and we ca
 `outDir` handles where the compiled `.js` files will be placed. In default, will create them next to their `.ts` file, however if we would like a better folder structure, we can specify a folder, and when we compile our TS files, the folder will be created with all the compiled JS files.
 If you keep your TS files in seperate folders, the created compiled folder will follow the same structure.
 
-```javascript
+```typescript
 {
     "outDir": "./dist" /* Redirect output structure to the directory. */,
 }
@@ -654,7 +663,7 @@ If you keep your TS files in seperate folders, the created compiled folder will 
 `rootDir` behaves similar to `include`, however if we specify the folder we want the compiler to run. It will not look for other `.ts` files outside of that folder.
 
 
-```javascript
+```typescript
 {
     "rootDir": "./src", /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
 }
@@ -662,7 +671,7 @@ If you keep your TS files in seperate folders, the created compiled folder will 
 
 ### Stop emitting files on compilation errors
 
-```javascript
+```typescript
 {
     "noEmitOnError": false, /* Default: false */
 }
@@ -673,7 +682,7 @@ Then when there is an error, won't compile any files to javascript.
 
 ### Code quality options
 
-```javascript
+```typescript
 {
     /* Additional Checks */
         
@@ -707,7 +716,7 @@ TypeScript offers full support for the `class` keyword introduced in ES2015.
 
 As with other JavaScript language features, TypeScript adds type annotations and other syntax to allow you to express relationships between classes and other types.
 
-```javascript
+```typescript
 // index.ts
 class Department {
     name: string;
@@ -722,7 +731,7 @@ console.log(accounting);
 
 The compilation to Javascript of such a `class` depends on the `"target"` we specify. For example if we compile it to **ES5** which didn't support modern JS *(as classes only available since ES6)*, after compilation this code would be a constructor function with the Department object.
 
-```javascript
+```typescript
 // index.js - Compiled code
 "use strict";
 var Department =(function () {
@@ -743,7 +752,7 @@ When we building a more complex `class` instance, we want to make sure, once our
 You can also use `private` for **variables** and **methods**.
 :::
 
-```javascript
+```typescript
 class Department {
     public name: string;
     private employees: string[] = [];
@@ -775,7 +784,7 @@ accounting.employees[0] = 'Anna' // will give an error as it has a private class
 
 We can refactor the constructor and variable declaration easily, so we can get rid off declaring our variables twice.
 
-```javascript
+```typescript
 class Department {
     name: string;
     private id: string;
@@ -789,7 +798,7 @@ class Department {
 
 *After refactor:*
 
-```javascript
+```typescript
 class Department {
     
     constructor(private name: string, public id: string) 
@@ -806,7 +815,7 @@ Make sure when declaring props this way, you must use the modifiers before the v
 
 It's a TypeScript feature that enables us to set a variable with it to be **only read**, without any modification **inside and outside its class**.
 
-```javascript
+```typescript
 class Department {
     name: string;
     private readonly id: string;
@@ -822,7 +831,7 @@ class Department {
 
 ### Inheritance
 
-```javascript
+```typescript
 class ITDepartment extends Department {
     admins: string[];
     constructor(id: string) {
@@ -849,7 +858,7 @@ ES6 includes static members and so does TypeScript. The static members of a clas
 
 The static members can be defined by using the keyword `static`. Consider the following example of a class with static property.
 
-```javascript
+```typescript
 class Circle {
     static pi: number = 3.14;
 }
@@ -873,7 +882,7 @@ An abstract method does not contain implementation. It only defines the signatur
 
 The following shows the Employee abstract class that has the `getSalary()` abstract method:
 
-```javascript
+```typescript
 abstract class Employee {
     constructor(private firstName: string, private lastName: string) {
     }
@@ -899,7 +908,7 @@ The `getSalary()` method is an abstract method. The derived class will implement
 
 We can use it to describe how an objest should look like.
 
-```javascript
+```typescript
 interface Person {
     name: string;
     age: number;
@@ -936,7 +945,7 @@ If we implement the interface with a class, the class will automatically know ab
 
 To extend interfaces, we use the `extends` keyword.
 
-```javascript
+```typescript
 interface Person {
     name: string;
     age: number;
@@ -952,7 +961,7 @@ interface Greetable extends People{
 As functions are objects in the end. We can use interface to define a function, just as types can define a function.
 However **its syntax is different** from a function type.
 
-```javascript
+```typescript
 // type AddFn = (a: number, b: number) => number;
 
 interface AddFn {
@@ -970,7 +979,7 @@ add = (n1: number, n2: number) => {
 
 We use question mark after the property name to specify as optional. We can use the same thing in classes as well. So if we don't have a value assing to this prop, we won't get an error.
 
-```javascript
+```typescript
 interface Person {
     name: string;
     age?: number;
@@ -985,6 +994,267 @@ Javascript doesn't have interfaces, so won't appear any output in your compiled 
 
 ### Intersection types
 
+With intersection types we can combine multiple and any kind of types, similar to the `interface ... extends ...`. 
+
+An intersection type creates a new type by combining multiple existing types. The new type has all features of the existing types. The type order is not important when you combine types.
+
+You can use it with object types as the example below, or with union types as well.
+
+```typescript
+type Admin = {
+    name: string;
+    priviledges: string[];
+};
+
+type Employee = {
+    name: string;
+    startDate: Date;
+};
+
+type ElevatedEmployee = Admin & Employee;
+
+const emp1: ElevatedEmployee = {
+    name: 'Benji',
+    priviledges: ['create-server'],
+    startDate: new Date(),
+}
+
+type Combinable = string | number;
+type Numeric = number | boolean;
+
+type Universal = Combinable & Numeric;
+```
+
+### More on Type Guards
+
+TypeScript uses some built-in JavaScript operators like `typeof`, `instanceof`, and the `in` operator, which is used to determine if an object contains a property. Type guards enable you to instruct the TypeScript compiler to infer a specific type for a variable in a particular context, ensuring that the type of an argument is what you say it is.
+
+Type guards are typically used for narrowing a type and are quite similar to feature detection, allowing you to detect the correct methods, prototypes, and properties of a value. Therefore, you can easily figure out how to handle that value.
+
+*There are five major ways to use a type guard:*
+
+- The `instanceof` keyword
+- The `typeof` keyword
+- The `in` keyword
+- Equality narrowing type guard
+- Custom type guard with predicate
+
+:::warning
+If you want to expand more on type guards, I suggest you to have a look on [this comprehensive article](https://blog.logrocket.com/how-to-use-type-guards-typescript/) from ***Oyinkansola Awosan***!
+:::
+
+```typescript
+function add(a: Combinable, b: Combinable) {
+    if (typeof a === 'string' || typeof b === 'string') {
+        return a.toString() + b.toString();
+    }
+    return a + b;
+}
+
+type UnknownEmpoloyee = Employee | Admin;
+
+function printEmployeeInformation(emp: UnknownEmployee) {
+    console.log('Name: ' + emp.name);
+    if ('priviledges' in emp) {
+        console.log('Priviledges: ' + emp.priviledges);
+    }
+    if ('startDate' in emp) {
+        console.log('Start date: ' + emp.startDate);
+    }
+}
+```
+
+```typescript
+class Car {
+    drive(){
+        console.log('🚗 Driving...');
+    }
+}
+
+class Truck {
+    drive(){
+        console.log('🚛 driving...');
+    }
+    loadCargo(amount: number){
+        console.log('Loading cargo...' + amount);
+    }
+}
+
+type Vehicle = Car | Truck;
+
+const v1 = new Car();
+const v2 = new Truck();
+
+function useVehicle(vehicle: Vehicle) {
+    vehicle.drive();
+    if(vehicle instanceof Truck) {
+        vehicle.loadCargo(1000)
+    }
+}
+
+useVehicle(v1);
+```
+
+:::danger
+We cannot use `instanceof` when we are working with interfaces, as they are not compiled to javascript. So at runtime it won't be available as a constructor function.
+:::
+
+### Discriminated Unions
+
+It's a pattern that makes implementing type guards easier. If you have a class with a literal member then you can use that property to discriminate between union members.
+
+To convert a union type into a discriminated union type, we use a common property across our types *(in our case I gave a prop name: `kind`)*. This property can be any name and will serve as an ID for the different types. Every type will have a different literal type for that property.
+
+```typescript
+interface Bird {
+    kind: 'bird';         // literal type
+    flyingSpeed: number;
+}
+
+interface Horse {
+    kind: 'horse';
+    runningSpeed: number;
+}
+
+type Animal = Bird | Horse;
+
+function moveAnimal(animal: Animal) {
+    let speed;
+    switch (animal.kind) {
+        case 'bird':
+            speed = animal.flyingSpeed;
+            break;
+        case 'horse':
+            speed = animal.runningSpeed;
+    }
+    console.log('Moving at speed: ' + speed);
+}
+
+moveAnimal({kind: 'bird', flyingSpeed: 67});
+```
+
+### Type casting
+
+Helps you tell Typescript that some value is of a specific type where TypeScript is not able to detect it on it's own, but you as a developer know that it will be the case.
+
+There is 2 ways to use type casting, and both are the same with different syntax.
+
+```typescript
+// wrong typing, not specific enough to get the value from the input
+const userInputElement = document.getElementById('user-input'); // TS only know that this is an HTMLElement, doesn't recognise what type of element exacly
+
+// one way to get this to work
+const userInputElement = <HTMLInputElement>document.getElementById('user-input')!; // here TS will know the exact type, therefore we can get the value
+
+// another way
+const userInputElement = document.getElementById('user-input')! as HTMLInputElement;
+
+userInputElement.value = 'Hi there!';
+```
+
+The exclamation mark allows us to tell TypeScript that the expression in front of it will never yield null.
+
+### Index properties
+
+It is a feature that allows us to create objects which are more flexible regarding the properties they might hold.
+
+So long story short, I need an object where I'm pretty clear regarding the value type. It should be a `string`, but where I don't advance how many properties I'll have and which name the properties will have. For such a scenario we can use **index types**.
+
+
+```typescript
+interface ErrorContainer {
+    // id: string;   VALID
+    [prop: string]: string;
+}
+
+const errorMsg: ErrorContainer = {
+    email: 'Not valid email!';
+    // 1: 'Not valid email!'; although the prop is a type of number, it's still valid, as number can be converted to a string, however it wouldn't work the other
+    name: 'Must start with a capital characther!';
+}
+```
+
+We can also add predefined types to the same interface, however they must be the same type. So for example `id` can be a `string`, as the index type also a `string`, but **cannot** be a `number`. This is all the restriction we have.
+
+This feature gives us this extra flexibility that we don't need to know in advance which property names we want to use and how many properties we need.
+
+### Function overloads
+
+A feature that allows us to define multiple function signatures, so to say, for one and the same function. Which simply means we can have multiple possible ways of calling a function with different parameters, to then do something inside of that function.
+
+Function overloading in TypeScript lets you define functions that can be called in multiple ways.
+
+Using function overloading requires defining the overload signatures: a set of functions with parameter and return types, but without a body. These signatures indicate how the function should be invoked.
+
+Additionally, you have to write the proper implementation of the function (implementation signature): the parameter and return types, as well the function body. Note that the implementation signature is not callable.
+
+Aside from regular functions, methods in classes can be overload too.
+
+```typescript
+type Combinable = string | number;
+
+function add(a: Combinable, b: Combinable) {
+    if (typeof a === 'string' || typeof b === 'string') {
+        return a.toString() + b.toString();
+    }
+    return a + b;
+}
+
+const result = add('Benji' + ' Peto');
+result.split(' '); // would throw an error, as TypeScript doesn't know which will be the return type exactly, and we cannot call .split() method on a number
+```
+
+We can add function overload signatures before the function, to tell TS what cases could handle to avoid this error.
+
+```typescript
+type Combinable = string | number;
+
+function add(a: string, b: string): string; // implementation signature
+function add(a: Combinable, b: Combinable) {
+    if (typeof a === 'string' || typeof b === 'string') {
+        return a.toString() + b.toString();
+    }
+    return a + b;
+}
+
+const result = add('Benji' + ' Peto');
+result.split(' '); // would run properly
+```
+
+We could add as many of cases as we want.
+
+### Optional chaining
+
+In bigger more complex applications you certainly work with structured nested data where you don't know with certainty if some property on an object is set or if it's maybe undefined. For this reason we can use optional chaining (**?**) with the question mark character. So if the property doesn't exist, it won't throw a runtime error, and our app keeps running.
+
+```typescript
+const fetchedUserData = {
+    id: 'u432',
+    name: 'Capitan',
+    /* job: {
+        title: 'CEO',
+        description: 'Dog runs this company',
+    } */
+}
+
+console.log(fetchedUserData?.job?.title);
+```
+
+### Nullish coalescing
+
+The nullish coalescing (**??**) operator is a logical operator that returns its right-hand side operand when its left-hand side operand is null or undefined, and otherwise returns its left-hand side operand.
+
+```typescript
+const userInput = undefined;
+
+const storedData = userInput ?? 'DEFAULT';
+
+console.log(storedData); // output: 'DEFAULT'
+```
+
+## Generics
+
+### Built-in generics & what are generics?
 
 
 
