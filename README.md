@@ -77,6 +77,15 @@ Understanding TypeScript
     - [Nullish coalescing](#nullish-coalescing)
   - [Generics](#generics)
     - [Built-in generics \& what are generics?](#built-in-generics--what-are-generics)
+      - [What are generics?](#what-are-generics)
+    - [Creating a generic function](#creating-a-generic-function)
+    - [Working with Constraints](#working-with-constraints)
+    - [The `keyof` constraint](#the-keyof-constraint)
+    - [Generic Classes](#generic-classes)
+    - [Generic utility types](#generic-utility-types)
+  - [Decorators](#decorators)
+    - [A first class decorator](#a-first-class-decorator)
+    - [Working with decorator factories](#working-with-decorator-factories)
 
 ___
 
@@ -1256,7 +1265,266 @@ console.log(storedData); // output: 'DEFAULT'
 
 ### Built-in generics & what are generics?
 
+TypeScript includes a number of built-in generic types that you can use in your code. These types are part of the standard library, and they are designed to make it easier to work with common data structures and patterns.
 
+Here are a few examples of built-in generic types in TypeScript:
+
+- `Array<T>`: Represents an array of values of a specific type. For example, `Array<string>` represents an array of strings.
+
+- `Promise<T>`: Represents a value that will be available asynchronously in the future. For example, `Promise<string>` represents a promise that will resolve to a string at some point in the future.
+
+- `IterableIterator<T>`: Represents an iterator that produces values of a specific type. For example, `IterableIterator<number>` represents an iterator that produces numbers.
+
+- `ReadonlyArray<T>`: Represents an array that is read-only, meaning that its values cannot be modified. For example, `ReadonlyArray<string>` represents an array of strings that cannot be modified.
+
+These are just a few examples of the built-in generic types that are available in TypeScript. You can find a complete list of built-in types in the TypeScript documentation.
+
+```typescript
+const names: Array<string> = []; // same as: string[]
+
+const promise: Promise<string> = new Promise((resolve, reject) => {
+   setTimeout(() => {
+       resolve('This is done!');
+   }, 2000); 
+});
+```
+
+#### What are generics?
+
+In TypeScript, generics are a way to create reusable components that can work with a variety of types. They allow you to write code that can be used with multiple different types while still providing type-safety.
+
+Here's a simple example of how generics can be used in TypeScript:
+
+```typescript
+// This is a generic function that takes a single argument of type T
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+// We can call the function with different types
+let output = identity<string>("Hello, world!");  // Output: "Hello, world!"
+let output = identity<number>(42);  // Output: 42
+```
+
+In this example, the `identity` function is a generic function that takes a single argument of type `T` and returns a value of the same type. When we call the function, we specify the type of `T` that we want to use. In the first call, we use `string`, and in the second call, we use `number`. The function will then return the value that was passed in, ensuring that the correct type is used.
+
+Generics can also be used with classes, interfaces, and other types in TypeScript. They are a powerful tool for creating flexible and reusable code that can be used with a variety of types.
+
+### Creating a generic function
+
+Here is a generic function in TypeScript that takes in two arguments, both of which can be of any type:
+
+```typescript
+function genericFunction<T, U>(arg1: T, arg2: U): void {
+  console.log(arg1, arg2);
+}
+```
+
+Here's how you can use this function:
+
+```typescript
+genericFunction<string, number>('hello', 42); // outputs 'hello' 42
+genericFunction<boolean, string>(true, 'world'); // outputs true 'world'
+```
+
+In the function definition, `T` and `U` are type variables. They are placeholders for the actual types that will be passed to the function when it is called. In this example, the first time the function is called, `T` is inferred to be of type `string` and `U` is inferred to be of type `number`. The second time the function is called, `T` is inferred to be of type `boolean` and `U` is inferred to be of type `string`.
+
+The function simply logs the values of the arguments to the console. Since the function does not return anything, its return type is `void`.
+
+### Working with Constraints
+
+Sometimes you may want to restrict the types of `T`and `U` here, so of your Generic Types.
+You can do that with **type constraints**. For generic types, you can set certain constraints regarding the types your generic types can be based on. You do this with the `extends` keyword in the angled brackets after the type which you wanna constrain.
+
+```typescript
+function merge<T extends object, U extends object>(objA: T, objB: U) {
+    return Object.assign(objA, objB);
+}
+
+const mergeObj = merge({name: 'Benji'}, age: {30}));
+```
+
+### The `keyof` constraint
+
+The keyof constraint in TypeScript is a way to specify that the type of a variable is the key of a specific type. This is often used in conjunction with a type that is an index type or a mapped type.
+
+For example, consider the following type:
+
+```typescript
+type ColorMap = {
+  red: '#ff0000',
+  green: '#00ff00',
+  blue: '#0000ff'
+}
+```
+
+Here, `ColorMap` is a type that maps string keys to string values. If we wanted to create a variable that could be assigned any of the keys in this type, we could use the `keyof` constraint as follows:
+
+```typescript
+let colorKey: keyof ColorMap;
+```
+
+Now, `colorKey` is a variable that can be assigned any of the keys in the `ColorMap` type (i.e., 'red', 'green', or 'blue').
+
+The `keyof` constraint can also be used in combination with other types.
+
+```typescript
+type ColorMap = {
+  red: '#ff0000',
+  green: '#00ff00',
+  blue: '#0000ff'
+}
+
+type ColorName = 'red' | 'green' | 'blue';
+
+let colorKey: keyof ColorMap & ColorName;
+```
+
+Here, `colorKey` is a variable that can be assigned any of the keys in the `ColorMap` type, and it must also be a value of the `ColorName` type.
+
+### Generic Classes
+
+In TypeScript, a generic class is a class that is parameterized over types. This means that the class defines one or more type variables, which can be used to specify the types of fields, method parameters, and return values.
+
+To create a generic class, you use the `<T>` syntax to specify the type variables.
+
+```typescript
+class Pair<T, U> {
+  constructor(public first: T, public second: U) {}
+}
+```
+
+Here, `Pair` is a generic class that has two type variables: `T` and `U`. These type variables are used to specify the types of the first and second fields, respectively.
+
+To create an instance of a generic class, you need to specify the types to use for the type variables.
+
+```typescript
+let pair = new Pair<string, number>('hello', 42);
+```
+
+Here, we are creating an instance of the `Pair` class, with the type `string` for the `T` type variable and the type `number` for the `U` type variable.
+
+You can also use type inference to let TypeScript infer the types for the type variables.
+
+```typescript
+let pair = new Pair('hello', 42);
+```
+
+In this case, TypeScript will infer that the type of the first field is `string` and the type of the second field is `number`.
+
+### Generic utility types
+
+Generic utility types are types that are parameterized over other types, and are used to represent common type transformations. Some examples of generic utility types include:
+
+* `Partial<T>`: Makes all properties in `T` optional
+* `Readonly<T>`: Makes all properties in `T` read-only
+* `Record<K, T>`: Creates a type with a set of properties of type `T` whose names are of type `K`
+* `Pick<T, K>`: Creates a type by picking the set of properties `K` from `T`
+* `Omit<T, K>`: Creates a type by removing the set of properties `K` from `T`
+
+Example how to use these:
+
+```typescript
+interface Todo {
+  title: string;
+  description: string;
+  completed: boolean;
+}
+
+type PartialTodo = Partial<Todo>;
+// PartialTodo is equivalent to:
+// {
+//   title?: string;
+//   description?: string;
+//   completed?: boolean;
+// }
+
+type ReadonlyTodo = Readonly<Todo>;
+// ReadonlyTodo is equivalent to:
+// {
+//   readonly title: string;
+//   readonly description: string;
+//   readonly completed: boolean;
+// }
+
+type TodoById = Record<string, Todo>;
+// TodoById is equivalent to:
+// {
+//   [id: string]: Todo;
+// }
+
+type TodoTitle = Pick<Todo, 'title'>;
+// TodoTitle is equivalent to:
+// {
+//   title: string;
+// }
+
+type OmitCompleted = Omit<Todo, 'completed'>;
+// OmitCompleted is equivalent to:
+// {
+//   title: string;
+//   description: string;
+// }
+```
+
+## Decorators
+
+### A first class decorator
+
+Decorator is a design pattern that allows you to attach additional responsibilities to an object dynamically. Decorators are a form of metaprogramming, as they allow you to modify the behavior of a class or object at runtime.
+
+To create a decorator in TypeScript, you need to define a function that takes the target object as an argument, and returns the modified object.
+
+The decorator is applied to the class using the `@` syntax. Decorators can be used to add functionality to classes and objects in a flexible and reusable way.
+
+```typescript
+// usually decorators start with a capital char, not obligatory, but good practice
+function Logger(target: Function) {
+    console.log('Logging...');
+    console.log(target);
+}
+
+@Logger
+class Person {
+    name = 'Benji';
+    
+    constructor() {
+        console.log('Creating person...');
+    }
+}
+
+const pers = new Person()
+
+console.log(pers);
+```
+
+### Working with decorator factories
+
+A decorator factory is a function that returns a decorator. This can be useful when you want to customize the behavior of a decorator based on arguments passed to the factory.
+
+To create a decorator factory, you simply define a function that returns a decorator function. 
+
+```typescript
+function Logger(logString: string) {
+    return function(target: Function) {
+        console.log(logString);
+        console.log(target); 
+    }
+}
+
+@Logger('LOGGING - PERSON')
+class Person {
+    name = 'Benji';
+    
+    constructor() {
+        console.log('Creating person...');
+    }
+}
+
+const pers = new Person()
+
+console.log(pers);
+```
 
 
 
