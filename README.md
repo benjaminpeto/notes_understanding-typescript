@@ -86,6 +86,14 @@ Understanding TypeScript
   - [Decorators](#decorators)
     - [A first class decorator](#a-first-class-decorator)
     - [Working with decorator factories](#working-with-decorator-factories)
+      - [Building more useful decorators](#building-more-useful-decorators)
+    - [Diving into property decorators](#diving-into-property-decorators)
+    - [Accessor \& Parameter decorators](#accessor--parameter-decorators)
+  - [Summary](#summary)
+  - [Resources](#resources)
+  - [Contribution](#contribution)
+    - [I appreciate any and all contributions to my notes!](#i-appreciate-any-and-all-contributions-to-my-notes)
+- [Thank you for your help and support. :heart:](#thank-you-for-your-help-and-support-heart)
 
 ___
 
@@ -1526,11 +1534,167 @@ const pers = new Person()
 console.log(pers);
 ```
 
+#### Building more useful decorators
 
+```typescript
+function Logger(logString: string) {
+    return function(target: Function) {
+        console.log(logString);
+        console.log(target); 
+    }
+}
 
+function WithTemplate(template: string, hookId: string) {
+    return function(_: Function) {    // with the '_' we can tell TS that we are aware of this argument (constructor), but we won't use it
+        const hookElement = document.getElementById('hookId');
+        if (hookElement) {
+            hookElement.innerHTML = template;
+        }
+    }
+}
 
+@WithTemplate('<h1>My person object</h1>', 'app')    // this will render the <h1> tag in the DOM
+@Logger('Logging')
+class Person {
+    name = 'Benji';
+    
+    constructor() {
+        console.log('Creating person...');
+    }
+}
 
+const pers = new Person()
 
+console.log(pers);
+```
+
+:::info
+You can always add more decorator to a class or anywhere you may need.
+The execution of multiple decorators will start from bottom to top. Which means first the `@Logger` then the `@WithTemplate` decorator will run, however before all of that the decorator factories will run of each decorator from top to bottom, as in normal JavaScript. 
+:::
+
+### Diving into property decorators
+
+```typescript
+function Log(target: any, propertyName: string | Symbol) {
+    console.log('Property decorator!');
+    console.log(target, propertyName);
+}
+
+class Product {
+    @Log
+    title: string;
+    private _price: number;
+    
+    set price(val: number) {
+        if (val > 0) {
+            this._price = val
+        } else {
+            throw new Error('Invalid price - should be positive')
+        }
+    }
+
+    constructor(t: string, p: number) {
+        this.title = t;
+        this._price = p;
+    }
+
+    getPriceWithTax(tax: number) {
+        return this._pricce * (1 + tax);
+    }
+}
+```
+
+It executes basically when your class definition is registered by JavaScript. So it executes when you define this property basically to JavaScript as part of your class.
+
+### Accessor & Parameter decorators
+
+In TypeScript, accessors are class members that provide a getter and/or setter for accessing a class property. They can be used to execute logic when a property is accessed or modified, or to create a computed property.
+
+```typescript
+function Log(target: any, propertyName: string | Symbol) {
+    console.log('Property decorator!');
+    console.log(target, propertyName);
+}
+
+function Log2(target: any, name: string, descriptor: PRopertyDescriptor) {
+    console.log('Accessor decorator!');
+    console.log(target);
+    console.log(name);
+    console.log(descriptor);
+}
+
+class Product {
+    @Log
+    title: string;
+    private _price: number;
+    
+    @Log2
+    set price(val: number) {
+        if (val > 0) {
+            this._price = val
+        } else {
+            throw new Error('Invalid price - should be positive')
+        }
+    }
+
+    constructor(t: string, p: number) {
+        this.title = t;
+        this._price = p;
+    }
+
+    getPriceWithTax(tax: number) {
+        return this._pricce * (1 + tax);
+    }
+}
+```
+
+Parameter decorators are a way to attach metadata to a function's parameters. They are not widely used, and are typically used in conjunction with a decorator factory, which is a function that returns a decorator.
+
+:::warning
+**Link**
+
+[typestack/class-validator](https://github.com/typestack/class-validator) is a ready made package which can help you use validation on class based decorators.
+:::
+
+## Summary
+
+TypeScript is a programming language that is a strict syntactical superset of JavaScript. It is designed to add optional static typing and class-based object-oriented programming to the language. This can improve the development experience and make it easier to catch mistakes and maintain code over time.
+
+To get started with TypeScript, you will need to install it and set up a compiler that can convert your TypeScript code into regular JavaScript that can be run in a web browser or on a server. There are a number of advantages to using TypeScript, including improved code completion, type checking, and better documentation.
+
+In TypeScript, you can use types to specify the kind of data that a variable or function is expected to work with. This can include simple types like numbers and strings, as well as more complex types like objects and arrays. TypeScript also introduces some new types, such as enums and unions, that are not available in JavaScript.
+
+TypeScript includes a powerful type inference system that can automatically detect the types of variables and functions based on how they are used. This can make it easier to get started with the language and reduce the amount of explicit type annotations that you need to write.
+
+Object types in TypeScript can include simple objects, arrays, tuples, enums, and a number of other types. You can use union types and type aliases to create more complex types, and you can use functions as types to create type-safe callbacks. TypeScript also includes the "unknown" and "never" types for more advanced use cases.
+
+The TypeScript compiler is a tool that can convert your TypeScript code into regular JavaScript that can be run in a web browser or on a server. You can use the compiler in "watch mode" to automatically recompile your code as you make changes, or you can use it to compile an entire project at once. You can also use the compiler to set the target version of JavaScript that your code will be compiled to, and to generate source maps that can help you debug your code.
+
+In TypeScript, you can use classes and interfaces to create complex types and organize your code into reusable units. Classes can include fields, properties, and methods, and you can use inheritance to create relationships between different classes. Interfaces can be used to define a set of related properties and methods that a class or object should implement, and you can use them to create more flexible and reusable code.
+
+## Resources
+
+There are a number of resources available for learning TypeScript, including the following:
+
+1. The **official TypeScript doc**umentation: https://www.typescriptlang.org/docs/
+2. The **TypeScript handbook**: https://www.typescriptlang.org/docs/handbook/basic-types.html
+3. **Marius Schulz**'s blog: https://blog.mariusschulz.com/ *(Marius is a software engineer and expert on TypeScript and other programming topics)*
+5. **Basarat Ali Syed**'s blog: https://basarat.gitbook.io/typescript/ *(Basarat is the author of the "TypeScript Deep Dive" book and a frequent contributor to the TypeScript community)*
+6. **Matt Pocock**, the TypeScript Wizard - tips, trick, articles, tutorials and workshops: https://www.totaltypescript.com/
+
+## Contribution
+
+**Every PR warm welcomed** :pray:
+
+**Mainly to improve or extend the documentation.**
+
+If you find an area of the documentation that could be improved, or if you see any typos or errors, you can help by submitting a pull request with your changes.
+
+Before you start working on a contribution, please make sure to **create a fork** of the repository and **create a new branch** for your changes. This will make it easier to track your changes and **submit** them as a **pull request**.
+
+### I appreciate any and all contributions to my notes! 
+# Thank you for your help and support. :heart: 
 
 
 
