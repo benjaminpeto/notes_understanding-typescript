@@ -295,17 +295,22 @@ console.log(StatusCodes.Success);
 Enums can also contain strings. This is more common than numeric enums, because of their readability and intent.
 
 ```typescript
-enum CardinalDirections {
-  North = 'North',
-  East = "East",
-  South = "South",
-  West = "West"
-};
-// logs "North"
-console.log(CardinalDirections.North);
-// logs "West"
-console.log(CardinalDirections.West);
+enum HttpStatusCode {
+  200 = 'OK',
+  400 = 'Bad Request',
+  401 = 'Unauthorized',
+  403 = 'Forbidden',
+  404 = 'Not Found',
+  500 = 'Internal Server Error',
+}
+
+function handleResponse(statusCode: HttpStatusCode): void {
+  const statusText = HttpStatusCode[statusCode];
+  console.log(`Status: ${statusCode} ${statusText}`);
+}
 ```
+
+In the above example, we define a function `handleResponse` that takes a `HttpStatusCode` parameter and uses it to log the corresponding status text.
 
 #### **Any type**
 
@@ -1194,6 +1199,30 @@ const errorMsg: ErrorContainer = {
 We can also add predefined types to the same interface, however they must be the same type. So for example `id` can be a `string`, as the index type also a `string`, but **cannot** be a `number`. This is all the restriction we have.
 
 This feature gives us this extra flexibility that we don't need to know in advance which property names we want to use and how many properties we need.
+
+***Another example***
+
+```typescript
+interface Dictionary {
+  [key: string]: string | number | boolean;
+}
+
+const myDict: Dictionary = {
+  name: 'Alice',
+  age: 30,
+  isAdmin: true,
+};
+
+console.log(myDict['name']);     // Output: 'Alice'
+console.log(myDict['age']);      // Output: 30
+console.log(myDict['isAdmin']);  // Output: true
+```
+
+In this example, we define an interface called `Dictionary` that has an index signature with a key of type `string` and a value that can be a `string`, a `number`, or a `boolean`. This allows us to create an object that can store key-value pairs of different types.
+
+We then define an object called `myDict` that conforms to the `Dictionary` interface, and assign it a few key-value pairs of different types. We can access the values of the object using bracket notation and passing in the key as a `string`.
+
+This kind of dictionary-like object can be useful in many scenarios where you need to store and access data in a flexible and dynamic way.
 
 ### Function overloads
 
